@@ -2,47 +2,87 @@
 // Based on De Neys & Schaeken (2007) and Dieussaert et al. (2011)
 // This code uses jsPsych to implement a dot pattern memory task with sentence judgment
 
-// Define the practice dot patterns in strict order
+// Define the practice dot patterns
 const practicePatterns = [
-  { type: 'practice', dots: [1, 5, 9] }, // diagonal
-  { type: 'practice', dots: [1, 2, 3, 4, 5, 6, 7, 8, 9] }, // all dots
-  { type: 'practice', dots: [1, 4, 5, 6, 9] } // cross-like
+  { type: 'practice', dots: [1, 5, 9] },
+  { type: 'practice', dots: [1, 2, 3, 4, 5, 6, 7, 8, 9] },
+  { type: 'practice', dots: [1, 4, 5, 6, 9] }
 ];
 
-// Define the practice sentences in strict order
+// Define the practice sentences
 const practiceSentences = [
   { text: "All circles are square", type: "practice" },
   { text: "Some pens are blue", type: "practice" },
   { text: "Some cups are spoons", type: "practice" }
 ];
 
-// Define the experimental dot patterns manually here
+// Define the experimental dot patterns
 // Each pattern is an array of positions (1-9, row-major order: 1=top-left, 2=top-middle, 3=top-right, etc.)
 const easyPatterns = [
-  { type: 'easy', dots: [1, 2, 3] }, // top row
-  { type: 'easy', dots: [4, 5, 6] }, // middle row
-  { type: 'easy', dots: [7, 8, 9] }, // bottom row
-  { type: 'easy', dots: [1, 4, 7] }, // left column
-  { type: 'easy', dots: [2, 5, 8] }, // middle column
-  { type: 'easy', dots: [3, 6, 9] }, // right column
+  { type: 'easy', dots: [1, 2, 3], characteristic: 'top-row' },
+  { type: 'easy', dots: [4, 5, 6], characteristic: 'middle-row' },
+  { type: 'easy', dots: [7, 8, 9], characteristic: 'bottom-row' },
+  { type: 'easy', dots: [1, 4, 7], characteristic: 'left-column' },
+  { type: 'easy', dots: [2, 5, 8], characteristic: 'middle-column' },
+  { type: 'easy', dots: [3, 6, 9], characteristic: 'right-column' },
 ];
 
 const hardPatterns = [
-  { type: 'hard', dots: [1, 3, 7, 9] }, // corners
-  { type: 'hard', dots: [2, 4, 6, 8] }, // edges
-  { type: 'hard', dots: [1, 2, 5, 9] }, // L shape
-  { type: 'hard', dots: [1, 3, 5, 7] }, // diagonal-ish
+  { type: 'hard', dots: [1, 5, 7, 9] },
+  { type: 'hard', dots: [1, 6, 7, 8] },
+  { type: 'hard', dots: [1, 2, 7, 9] },
+  { type: 'hard', dots: [3, 4, 5, 7] },
+  { type: 'hard', dots: [2, 4, 8, 9] },
+  { type: 'hard', dots: [2, 3, 5, 9] },
+  { type: 'hard', dots: [3, 4, 6, 8] },
+  { type: 'hard', dots: [4, 6, 8, 9] },
+  { type: 'hard', dots: [1, 3, 5, 7] },
+  { type: 'hard', dots: [2, 4, 5, 7] },
+  { type: 'hard', dots: [1, 5, 6, 8] },
+  { type: 'hard', dots: [2, 3, 4, 8] },
+  { type: 'hard', dots: [1, 2, 6, 8] },
+  { type: 'hard', dots: [1, 3, 6, 7] },
+  { type: 'hard', dots: [2, 4, 6, 9] },
+  { type: 'hard', dots: [2, 5, 6, 7] },
+  { type: 'hard', dots: [3, 4, 8, 9] },
+  { type: 'hard', dots: [3, 5, 7, 9] },
 ];
 
-// Define the experimental sentences manually here
+// Define the experimental sentences
 // Each sentence has text and type (SomeUnderinformative, SomeTrue, SomeFalse, AllTrue, AllFalse)
 const sentences = [
-  { text: "Some animals are mammals.", type: "SomeUnderinformative" },
-  { text: "All birds can fly.", type: "AllFalse" },
-  { text: "Some fruits are apples.", type: "SomeTrue" },
-  { text: "All mammals give live birth.", type: "AllTrue" },
-  { text: "Some vehicles are cars.", type: "SomeUnderinformative" },
-  // Add more sentences as needed
+  { text: "Some oaks are trees.", type: "SomeUnderinformative" },
+  { text: "Some roses are flowers.", type: "SomeUnderinformative" },
+  { text: "Some bananas are fruits.", type: "SomeUnderinformative" },
+  { text: "Some carrots are vegetables.", type: "SomeUnderinformative" },
+  { text: "Some parrots are birds.", type: "SomeUnderinformative" },
+  { text: "Some wasps are insects.", type: "SomeUnderinformative" },
+  { text: "Some sparrows are birds.", type: "SomeUnderinformative" },
+  { text: "Some horses are animals.", type: "SomeUnderinformative" },
+  { text: "Some salmons are fish.", type: "SomeUnderinformative" },
+  { text: "Some tulips are flowers.", type: "SomeUnderinformative" },
+  { text: "Some crocodiles are reptiles.", type: "SomeUnderinformative" },
+  { text: "Some broccolis are vegetables.", type: "SomeUnderinformative" },
+  { text: "Some birches are trees.", type: "SomeUnderinformative" },
+  { text: "Some chickens are birds.", type: "SomeUnderinformative" },
+  { text: "Some sharks are fish.", type: "SomeUnderinformative" },
+  { text: "Some giraffes are animals.", type: "SomeUnderinformative" },
+  { text: "Some trees are apple trees.", type: "SomeTrue" },
+  { text: "Some flowers are poppies.", type: "SomeTrue" },
+  { text: "Some reptiles are snakes.", type: "SomeTrue" },
+  { text: "Some insects are flies.", type: "SomeTrue" },
+  { text: "Some pigeons are insects.", type: "SomeFalse" },
+  { text: "Some lemons are flowers.", type: "SomeFalse" },
+  { text: "Some mosquitos are birds.", type: "SomeFalse" },
+  { text: "Some dogs are vegetables.", type: "SomeFalse" },
+  { text: "All cats are animals.", type: "AllTrue" },
+  { text: "All crows are birds.", type: "AllTrue" },
+  { text: "All ants are insects.", type: "AllTrue" },
+  { text: "All cobras are snakes.", type: "AllTrue" },
+  { text: "All fruits are strawberries.", type: "AllFalse" },
+  { text: "All fishes are carp.", type: "AllFalse" },
+  { text: "All reptiles are alligators.", type: "AllFalse" },
+  { text: "All animals are donkeys.", type: "AllFalse" },
 ];
 
 // Function to create HTML for the 3x3 grid
@@ -122,6 +162,42 @@ function shuffle(array) {
   return array;
 }
 
+// Create a sequence of patterns where no two consecutive patterns have the same characteristic
+function createNonConsecutiveSequence(patterns, numTrials) {
+  const sequence = [];
+  let lastCharacteristic = null;
+
+  for (let i = 0; i < numTrials; i++) {
+    // Get patterns that don't match the last characteristic
+    const available = patterns.filter(p => p.characteristic !== lastCharacteristic);
+    
+    // If no available patterns (shouldn't happen), use all patterns
+    const pool = available.length > 0 ? available : patterns;
+    
+    // Randomly select one
+    const selected = pool[Math.floor(Math.random() * pool.length)];
+    sequence.push(selected);
+    lastCharacteristic = selected.characteristic;
+  }
+
+  return sequence;
+}
+
+// Create a shuffled sequence of hard patterns
+function createShuffledSequence(patterns, numTrials) {
+  const sequence = [];
+  // Repeat patterns to reach numTrials
+  const repeated = [];
+  const timesNeeded = Math.ceil(numTrials / patterns.length);
+
+  for (let i = 0; i < timesNeeded; i++) {
+    repeated.push(...patterns);
+  }
+
+  // Shuffle and take first numTrials
+  return shuffle(repeated).slice(0, numTrials);
+}
+
 // Wrap main code execution to ensure all dependencies are loaded
 function initializeExperiment() {
   // Initialize jsPsych
@@ -136,21 +212,21 @@ function initializeExperiment() {
     }
   });
 
-  // Practice patterns and sentences in strict order (no shuffling)
+  // Practice patterns and sentences in order (no shuffling)
   let practicePatternIndex = 0;
   let practiceSentenceIndex = 0;
 
-  // Determine block order randomly
+  // Determine block order randomly (easy or hard dot patterns first)
   const blockOrder = Math.random() < 0.5 ? ['easy', 'hard'] : ['hard', 'easy'];
 
-  // Function to get block sentences: 8 SomeUnderinformative + 1 of each other type, shuffled
+  // Function to get block sentences: 8 SomeUnderinformative + 2 of each other type, shuffled
   function getBlockSentences() {
     const someUnder = sentences.filter(s => s.type === 'SomeUnderinformative');
     const shuffledSomeUnder = shuffle([...someUnder]).slice(0, 8);
     const otherTypes = ['SomeTrue', 'SomeFalse', 'AllTrue', 'AllFalse'];
-    const others = otherTypes.map(type => {
+    const others = otherTypes.flatMap(type => {
       const filtered = sentences.filter(s => s.type === type);
-      return shuffle(filtered)[0];
+      return shuffle(filtered).slice(0, 2);  // Take 2 of each type
     });
     const blockSentences = [...shuffledSomeUnder, ...others];
     return shuffle(blockSentences);
@@ -180,7 +256,7 @@ function initializeExperiment() {
   // Create timeline
   const timeline = [];
 
-  // Fullscreen trial (only once at the beginning)
+  // Intiate fullscreen
   timeline.push({
     type: 'fullscreen',
     fullscreen_mode: true,
@@ -364,7 +440,16 @@ function initializeExperiment() {
   // Experimental blocks
   for (let blockNum = 0; blockNum < 2; blockNum++) {
     const blockType = blockOrder[blockNum];
-    const blockPatterns = blockType === 'easy' ? shuffle([...easyPatterns]) : shuffle([...hardPatterns]);
+    let blockPatterns;
+
+    // For easy patterns, use non-consecutive sequence to avoid repeating characteristics
+    // For hard patterns, use shuffled sequence
+    if (blockType === 'easy') {
+      blockPatterns = createNonConsecutiveSequence(easyPatterns, 12);
+    } else {
+      blockPatterns = createShuffledSequence(hardPatterns, 12);
+    }
+
     let blockPatternIndex = 0;
     const blockSentences = getBlockSentences();
     let blockSentenceIndex = 0;
