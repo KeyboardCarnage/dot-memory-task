@@ -1,6 +1,6 @@
-// Dot Memory Task for Qualtrics Survey
-// Based on De Neys & Schaeken (2007) and Dieussaert et al. (2011)
-// This code uses jsPsych to implement a dot pattern memory task with sentence judgment
+// Dot Memory and Sentence Judgement Dual Task 
+// Based on De Neys & Schaeken (2007), Dieussaert et al. (2011) and Marty & Chemla (2013)
+// This code uses jsPsych to implement a dot pattern memory task with sentence judgement
 
 // Define the practice dot patterns
 const practicePatterns = [
@@ -162,7 +162,7 @@ function shuffle(array) {
   return array;
 }
 
-// Create a sequence of patterns where no two consecutive patterns have the same characteristic
+// Create a sequence of easy dot patterns where no two consecutive patterns have the same characteristic
 function createNonConsecutiveSequence(patterns, numTrials) {
   const sequence = [];
   let lastCharacteristic = null;
@@ -183,7 +183,7 @@ function createNonConsecutiveSequence(patterns, numTrials) {
   return sequence;
 }
 
-// Create a shuffled sequence of hard patterns
+// Create a shuffled sequence of hard dot patterns
 function createShuffledSequence(patterns, numTrials) {
   const sequence = [];
   // Repeat patterns to reach numTrials
@@ -289,7 +289,7 @@ function initializeExperiment() {
     if (isFirstPractice) {
       timeline.push({
         type: 'html-button-response',
-        stimulus: createGridHTML(trial.pattern.dots) + '<p>Look at the pattern. Press continue when ready.</p>',
+        stimulus: createGridHTML(trial.pattern.dots) + '<p>Look at the pattern and memorise it. Press continue when ready.</p>',
         choices: ['Continue'],
         button_html: '<button class="button">%choice%</button>',
         data: { is_practice: true, block: 'practice' },
@@ -321,7 +321,7 @@ function initializeExperiment() {
       type: 'html-keyboard-response',
       stimulus: `<div class="sentence">${trial.sentence.text}</div>
                  <div class="buttons">
-                   <p>Press F for True or J for False</p>
+                   <p>Press the buttons or F for True and J for False</p>
                    <button class="button" onclick="jsPsych.pluginAPI.pressKey('f')">True</button>
                    <button class="button" onclick="jsPsych.pluginAPI.pressKey('j')">False</button>
                  </div>`,
@@ -340,9 +340,10 @@ function initializeExperiment() {
     timeline.push({
       type: 'html-button-response',
       stimulus: `<p>Please reproduce the dot pattern you saw earlier.</p>
-                 <p>Use mouse clicks or numpad (1-9) to place dots.</p>
+                 <p>Click on the grid or use your numpad (1-9) to place dots.</p>
+                 <p>Press continue when you are satisfied with the grid pattern.</p>
                  ${createGridHTML([], true)}`,
-      choices: ['Submit'],
+      choices: ['Continue'],
       button_html: '<button class="button">%choice%</button>',
       data: { is_practice: true, block: 'practice' },
       on_load: function() {
@@ -432,7 +433,7 @@ function initializeExperiment() {
   // Experiment instruction
   timeline.push({
     type: 'html-button-response',
-    stimulus: '<div class="sentence">The real experiment will start now.</div>',
+    stimulus: '<div class="sentence">This concludes the practice trials.<br>The experiment will start now.</div>',
     choices: ['Start Experiment'],
     button_html: '<button class="button">%choice%</button>'
   });
@@ -460,7 +461,7 @@ function initializeExperiment() {
       blockPatternIndex++;
       blockSentenceIndex++;
 
-      // Fixation trial
+      // Fixation
       timeline.push({
         type: 'html-keyboard-response',
         stimulus: '<div class="fixation">+</div>',
@@ -488,7 +489,6 @@ function initializeExperiment() {
         type: 'html-keyboard-response',
         stimulus: `<div class="sentence">${trial.sentence.text}</div>
                    <div class="buttons">
-                     <p>Press F for True or J for False</p>
                      <button class="button" onclick="jsPsych.pluginAPI.pressKey('f')">True</button>
                      <button class="button" onclick="jsPsych.pluginAPI.pressKey('j')">False</button>
                    </div>`,
@@ -505,10 +505,8 @@ function initializeExperiment() {
       // Dot pattern reproduction
       timeline.push({
         type: 'html-button-response',
-        stimulus: `<p>Please reproduce the dot pattern you saw earlier.</p>
-                   <p>Use mouse clicks or numpad (1-9) to place dots.</p>
-                   ${createGridHTML([], true)}`,
-        choices: ['Submit'],
+        stimulus: `${createGridHTML([], true)}`,
+        choices: ['Continue'],
         button_html: '<button class="button">%choice%</button>',
         data: { block: blockType },
         on_load: function() {
@@ -598,7 +596,7 @@ function initializeExperiment() {
     if (blockNum === 0) {
       timeline.push({
         type: 'html-button-response',
-        stimulus: '<div class="sentence">You are now halfway along this phase of the experiment and can take a short break.</div>',
+        stimulus: '<div class="sentence">You are now halfway along this phase of the experiment and can take a short break.<br>Press continue when you are ready to proceed.</div>',
         choices: ['Continue'],
         button_html: '<button class="button">%choice%</button>'
       });
