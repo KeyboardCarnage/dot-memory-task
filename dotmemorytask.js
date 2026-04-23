@@ -115,7 +115,7 @@ html, body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
   background-color: white;
 }
@@ -123,7 +123,7 @@ html, body {
 .jspsych-display-element {
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
   min-height: 100vh;
   width: 100%;
@@ -133,7 +133,7 @@ html, body {
 .jspsych-trial {
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
   width: 100%;
   height: 100%;
@@ -168,10 +168,15 @@ html, body {
 
 /* Fixation cross */
 .fixation {
-  font-size: 80px;
+  font-size: 60px;
   text-align: center;
   margin: 0;
   line-height: 1;
+  width: 300px;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Sentences */
@@ -202,8 +207,8 @@ html, body {
 }
 
 .grid-cell {
-  border: 2px solid #000;
-  display: flex;
+  border: 1px solid #000;
+  display: grid;
   align-items: center;
   justify-content: center;
   background-color: #fff;
@@ -665,7 +670,6 @@ function initializeExperiment() {
         type: jsPsychHtmlButtonResponse,
         stimulus: `<div class="trial-content">
                      <div class="sentence">${trial.sentence.text}</div>
-                     <div class="trial-button-instructions">Click True or False, or press F for True and J for False</div>
                    </div>`,
         choices: ['True', 'False'],
         button_html: '<button class="jspsych-btn">%choice%</button>',
@@ -698,7 +702,6 @@ function initializeExperiment() {
       timeline.push({
         type: jsPsychHtmlButtonResponse,
         stimulus: `<div class="trial-content">
-                     <div class="trial-instructions">Reproduce the dot pattern</div>
                      ${createGridHTML([], true)}
                    </div>`,
         choices: ['Continue'],
