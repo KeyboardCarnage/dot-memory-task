@@ -102,6 +102,7 @@ function createGridHTML(dots = [], clickable = false) {
 const gridCSS = `<style>
 * {
   box-sizing: border-box;
+  font-family: Calibri, sans-serif;
 }
 
 html, body {
