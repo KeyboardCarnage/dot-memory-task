@@ -153,7 +153,7 @@ html, body {
 
 /* Instructions and prompts above content */
 .trial-instructions {
-  font-size: 18px;
+  font-size: 24px;
   text-align: center;
   margin-bottom: 30px;
   color: #333;
@@ -161,7 +161,7 @@ html, body {
 
 /* Button prompts below content */
 .trial-button-instructions {
-  font-size: 16px;
+  font-size: 20px;
   text-align: center;
   margin-top: 30px;
   color: #666;
@@ -359,9 +359,18 @@ function initializeExperiment() {
       const data = jsPsych.data.get().values();
       console.log("Experiment data:", data);
       
+      // Extract specific data for Qualtrics
+      const sentenceResponses = data.filter(trial => trial.sentence_response).map(trial => trial.sentence_response);
+      const reproductionAccuracies = data.filter(trial => trial.reproduction_correct !== undefined).map(trial => trial.reproduction_correct);
+      
+      console.log("Sentence responses:", sentenceResponses);
+      console.log("Reproduction accuracies:", reproductionAccuracies);
+      
       // Try to save to Qualtrics if available
       if (typeof Qualtrics !== 'undefined' && Qualtrics.SurveyEngine) {
         Qualtrics.SurveyEngine.setEmbeddedData('jsPsychData', JSON.stringify(data));
+        Qualtrics.SurveyEngine.setEmbeddedData('sentenceResponses', JSON.stringify(sentenceResponses));
+        Qualtrics.SurveyEngine.setEmbeddedData('reproductionAccuracies', JSON.stringify(reproductionAccuracies));
         Qualtrics.SurveyEngine.setEmbeddedData('taskCompleted', 'true');
         if (typeof jQuery !== 'undefined') {
           jQuery('#NextButton').click();
