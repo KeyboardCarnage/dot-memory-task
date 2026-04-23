@@ -734,23 +734,24 @@ function initializeExperiment() {
             cell.addEventListener('click', clickHandler);
           });
 
+          const numpadToGridMap = { '1': 7, '2': 8, '3': 9, '4': 4, '5': 5, '6': 6, '7': 1, '8': 2, '9': 3 };
           keydownHandler = function(e) {
-            const key = parseInt(e.key, 10);
-            if (key >= 1 && key <= 9) {
+            const gridPos = numpadToGridMap[e.key];
+            if (gridPos) {
               e.preventDefault();
-              const cell = document.querySelector(`.grid-cell[data-position="${key}"]`);
+              const cell = document.querySelector(`.grid-cell[data-position="${gridPos}"]`);
               if (cell) {
                 const dot = cell.querySelector('.dot');
                 if (dot) {
                   dot.remove();
-                  const idx = selectedDots.indexOf(key);
+                  const idx = selectedDots.indexOf(gridPos);
                   if (idx > -1) {
                     selectedDots.splice(idx, 1);
                   }
                 } else {
                   cell.innerHTML = '<div class="dot"></div>';
-                  if (!selectedDots.includes(key)) {
-                    selectedDots.push(key);
+                  if (!selectedDots.includes(gridPos)) {
+                    selectedDots.push(gridPos);
                   }
                 }
               }
