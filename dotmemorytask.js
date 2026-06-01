@@ -363,7 +363,7 @@ function initializeExperiment() {
       
       // At the end of the experiment, save data
       const data = jsPsych.data.get().values();
-      console.log("Experiment data:", experimentData);
+      console.log("Experiment data:", data);
       
       // Extract specific data for Qualtrics
       const sentenceResponses = data.filter(trial => trial.sentence_response !== undefined).map(trial => trial.sentence_response);
