@@ -28,24 +28,24 @@ const easyPatterns = [
 ];
 
 const hardPatterns = [
-  { type: 'hard', dots: [1, 5, 7, 9] },
+  { type: 'hard', dots: [1, 4, 5, 9] },
   { type: 'hard', dots: [1, 6, 7, 8] },
-  { type: 'hard', dots: [1, 2, 7, 9] },
+  { type: 'hard', dots: [1, 2, 5, 9] },
   { type: 'hard', dots: [3, 4, 5, 7] },
   { type: 'hard', dots: [2, 4, 8, 9] },
-  { type: 'hard', dots: [2, 3, 5, 9] },
+  { type: 'hard', dots: [1, 4, 6, 8] },
   { type: 'hard', dots: [3, 4, 6, 8] },
-  { type: 'hard', dots: [4, 6, 8, 9] },
+  { type: 'hard', dots: [2, 3, 5, 7] },
   { type: 'hard', dots: [1, 3, 5, 7] },
-  { type: 'hard', dots: [2, 4, 5, 7] },
+  { type: 'hard', dots: [2, 4, 6, 7] },
   { type: 'hard', dots: [1, 5, 6, 8] },
   { type: 'hard', dots: [2, 3, 4, 8] },
   { type: 'hard', dots: [1, 2, 6, 8] },
-  { type: 'hard', dots: [1, 3, 6, 7] },
+  { type: 'hard', dots: [2, 4, 7, 9] },
   { type: 'hard', dots: [2, 4, 6, 9] },
   { type: 'hard', dots: [2, 5, 6, 7] },
   { type: 'hard', dots: [3, 4, 8, 9] },
-  { type: 'hard', dots: [3, 5, 7, 9] },
+  { type: 'hard', dots: [3, 4, 5, 8] },
 ];
 
 // Define the experimental sentences
@@ -345,9 +345,15 @@ function createShuffledSequence(patterns, numTrials) {
   return shuffle(repeated).slice(0, numTrials);
 }
 
+// Global tracking of used sentences to prevent repetition across blocks
+let usedSentenceTexts = new Set();
+
 // Wrap main code execution to ensure all dependencies are loaded
 function initializeExperiment() {
   console.log("Initializing experiment...");
+  
+  // Reset tracking at start of experiment
+  usedSentenceTexts = new Set();
   
   // Initialise jsPsych
   const jsPsych = initJsPsych({
@@ -357,19 +363,22 @@ function initializeExperiment() {
       
       // At the end of the experiment, save data
       const data = jsPsych.data.get().values();
-      console.log("Experiment data:", data);
+      console.log("Experiment data:", experimentData);
       
       // Extract specific data for Qualtrics
-      const sentenceResponses = data.filter(trial => trial.sentence_response).map(trial => trial.sentence_response);
+      const sentenceResponses = data.filter(trial => trial.sentence_response !== undefined).map(trial => trial.sentence_response);
+      const sentenceTexts = data.filter(trial => trial.sentence_text !== undefined).map(trial => trial.sentence_text);
       const reproductionAccuracies = data.filter(trial => trial.reproduction_correct !== undefined).map(trial => trial.reproduction_correct);
       
       console.log("Sentence responses:", sentenceResponses);
+      console.log("Sentence texts:", sentenceTexts);
       console.log("Reproduction accuracies:", reproductionAccuracies);
       
       // Try to save to Qualtrics if available
       if (typeof Qualtrics !== 'undefined' && Qualtrics.SurveyEngine) {
         Qualtrics.SurveyEngine.setEmbeddedData('jsPsychData', JSON.stringify(data));
         Qualtrics.SurveyEngine.setEmbeddedData('sentenceResponses', JSON.stringify(sentenceResponses));
+        Qualtrics.SurveyEngine.setEmbeddedData('sentenceTexts', JSON.stringify(sentenceTexts));
         Qualtrics.SurveyEngine.setEmbeddedData('reproductionAccuracies', JSON.stringify(reproductionAccuracies));
         Qualtrics.SurveyEngine.setEmbeddedData('taskCompleted', 'true');
         if (typeof jQuery !== 'undefined') {
@@ -390,15 +399,26 @@ function initializeExperiment() {
   const blockOrder = Math.random() < 0.5 ? ['easy', 'hard'] : ['hard', 'easy'];
 
   // Function to get block sentences: 8 SomeUnderinformative + 2 of each other type, shuffled
+  // Ensures no sentences are repeated across blocks
   function getBlockSentences() {
-    const someUnder = sentences.filter(s => s.type === 'SomeUnderinformative');
+    // Filter out already-used sentences
+    const someUnder = sentences.filter(s => s.type === 'SomeUnderinformative' && !usedSentenceTexts.has(s.text));
     const shuffledSomeUnder = shuffle([...someUnder]).slice(0, 8);
+    
+    // Get 2 of each other type (excluding used sentences)
     const otherTypes = ['SomeTrue', 'SomeFalse', 'AllTrue', 'AllFalse'];
     const others = otherTypes.flatMap(type => {
-      const filtered = sentences.filter(s => s.type === type);
+      const filtered = sentences.filter(s => s.type === type && !usedSentenceTexts.has(s.text));
       return shuffle(filtered).slice(0, 2);  // Take 2 of each type
     });
+    
+    // Mark all selected sentences as used
     const blockSentences = [...shuffledSomeUnder, ...others];
+    blockSentences.forEach(sentence => {
+      usedSentenceTexts.add(sentence.text);
+    });
+    
+    console.log("Block sentences selected:", blockSentences.length, "total. SomeUnder:", shuffledSomeUnder.length, "Others:", others.length);
     return shuffle(blockSentences);
   }
 
@@ -420,7 +440,7 @@ function initializeExperiment() {
     return { pattern, sentence };
   }
 
-  // Add CSS to the page using vanilla JavaScript instead of jQuery
+  // Add CSS to the page using JavaScript
   const styleElement = document.createElement('style');
   styleElement.innerHTML = gridCSS.replace(/<style>|<\/style>/g, '');
   document.head.appendChild(styleElement);
@@ -522,6 +542,9 @@ function initializeExperiment() {
           document.removeEventListener('keydown', window.sentenceJudgementKeyHandler);
           delete window.sentenceJudgementKeyHandler;
         }
+        // Save what subject answered (True or False) and the sentence details
+        data.sentence_response = data.button_pressed === 0 ? 'True' : 'False';
+        data.sentence_text = trial.sentence.text;
       }
     });
 
@@ -707,6 +730,9 @@ function initializeExperiment() {
             document.removeEventListener('keydown', window.sentenceJudgementKeyHandler);
             delete window.sentenceJudgementKeyHandler;
           }
+          // Save what subject answered (True or False) and the sentence details
+          data.sentence_response = data.button_pressed === 0 ? 'True' : 'False';
+          data.sentence_text = trial.sentence.text;
         }
       });
 
