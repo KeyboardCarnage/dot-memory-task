@@ -636,7 +636,8 @@ function initializeExperiment() {
           return '<div class="feedback">Correct reproduction!<br>Please continue the experiment.</div>';
         } else {
           // For practice, show correct pattern if wrong
-          return '<div class="feedback">Incorrect reproduction!<br>Here is the correct pattern:<br>' + createGridHTML(lastTrial.correct_dots) + '<br>Please pay more attention to the dot pattern.</div>';
+          const correctDots = window.currentPatternDots || [];
+          return '<div class="feedback">Incorrect reproduction!<br>Here is the correct pattern:<br>' + createGridHTML(correctDots) + '<br>Please pay more attention to the dot pattern.</div>';
         }
       },
       choices: ['Continue'],
