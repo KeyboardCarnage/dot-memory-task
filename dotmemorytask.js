@@ -661,17 +661,17 @@ function initializeExperiment() {
     // For easy patterns, use non-consecutive sequence to avoid repeating characteristics
     // For hard patterns, use shuffled sequence
     if (blockType === 'easy') {
-      blockPatterns = createNonConsecutiveSequence(easyPatterns, 12);
+      blockPatterns = createNonConsecutiveSequence(easyPatterns, 16);
     } else {
-      blockPatterns = createShuffledSequence(hardPatterns, 12);
+      blockPatterns = createShuffledSequence(hardPatterns, 16);
     }
 
     let blockPatternIndex = 0;
     const blockSentences = getBlockSentences();
     let blockSentenceIndex = 0;
 
-    // Trials for this block (12 trials)
-    for (let trialNum = 0; trialNum < 12; trialNum++) {
+    // Trials for this block (16 trials: 8 SomeUnderinformative + 2 each of SomeTrue, SomeFalse, AllTrue, AllFalse)
+    for (let trialNum = 0; trialNum < 16; trialNum++) {
       const trial = getNextExperimentalTrial(blockPatterns, blockPatternIndex, blockSentences, blockSentenceIndex);
       blockPatternIndex++;
       blockSentenceIndex++;
