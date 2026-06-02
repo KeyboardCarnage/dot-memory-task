@@ -384,6 +384,7 @@ function initializeExperiment() {
         if (typeof jQuery !== 'undefined') {
           jQuery('#NextButton').click();
         }
+        qthis.clickNextButton();
       } else {
         console.log("Not in Qualtrics - displaying data in console");
         jsPsych.data.displayData();
