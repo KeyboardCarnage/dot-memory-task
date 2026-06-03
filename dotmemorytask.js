@@ -1,6 +1,6 @@
 // Dot Memory and Sentence Judgement Dual Task 
 // Based on De Neys & Schaeken (2007), Dieussaert et al. (2011) and Marty & Chemla (2013)
-// This code uses jsPsych to implement a dot pattern memory task with sentence judgement
+// This code uses jsPsych to implement a dot pattern memory task and sentence judgement dual-task
 
 // Hide next button
 var qthis = this;
