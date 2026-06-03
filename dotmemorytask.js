@@ -3,8 +3,10 @@
 // This code uses jsPsych to implement a dot pattern memory task with sentence judgement
 
 // Hide next button
-var qthis = this;
-qthis.hideNextButton();
+ if (typeof Qualtrics !== 'undefined' && Qualtrics.SurveyEngine) {
+  var qthis = this;
+  qthis.hideNextButton();
+ }
 
 // Define the practice dot patterns
 const practicePatterns = [
