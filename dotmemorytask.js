@@ -524,7 +524,7 @@ function initializeExperiment() {
         on_finish: function(data) {
           data.pattern_type = trial.pattern.type;
           data.pattern_dots = trial.pattern.dots;
-          data.sentence_text = trial.sentence_text;
+          data.sentence_text = trial.sentence.text;
           data.sentence_type = trial.sentence.type;
           window.currentPatternDots = trial.pattern.dots;
         }
@@ -539,7 +539,7 @@ function initializeExperiment() {
         on_finish: function(data) {
           data.pattern_type = trial.pattern.type;
           data.pattern_dots = trial.pattern.dots;
-          data.sentence_text = trial.sentence_text;
+          data.sentence_text = trial.sentence.text;
           data.sentence_type = trial.sentence.type;
           window.currentPatternDots = trial.pattern.dots;
         }
@@ -550,7 +550,7 @@ function initializeExperiment() {
     timeline.push({
       type: jsPsychHtmlButtonResponse,
       stimulus: `<div class="trial-content">
-                   <div class="sentence">${trial.sentence_text}</div>
+                   <div class="sentence">${trial.sentence.text}</div>
                    <div class="trial-button-instructions">Click True or False, or press F for True and J for False</div>
                  </div>`,
       choices: ['True', 'False'],
@@ -580,7 +580,7 @@ function initializeExperiment() {
         }
         // Save what subject answered (True or False) and the sentence details
         data.sentence_response = data.button_pressed === 0 ? 'True' : 'False';
-        data.sentence_text = trial.sentence_text;
+        data.sentence_text = trial.sentence.text;
       }
     });
 
@@ -731,7 +731,7 @@ function initializeExperiment() {
         on_finish: function(data) {
           data.pattern_type = trial.pattern.type;
           data.pattern_dots = trial.pattern.dots;
-          data.sentence_text = trial.sentence_text;
+          data.sentence_text = trial.sentence.text;
           data.sentence_type = trial.sentence.type;
           window.currentPatternDots = trial.pattern.dots;
         }
@@ -741,7 +741,7 @@ function initializeExperiment() {
       timeline.push({
         type: jsPsychHtmlButtonResponse,
         stimulus: `<div class="trial-content">
-                     <div class="sentence">${trial.sentence_text}</div>
+                     <div class="sentence">${trial.sentence.text}</div>
                    </div>`,
         choices: ['True', 'False'],
         button_html: '<button class="jspsych-btn">%choice%</button>',
@@ -769,7 +769,7 @@ function initializeExperiment() {
           }
           // Save what subject answered (True or False) and the sentence details
           data.sentence_response = data.button_pressed === 0 ? 'True' : 'False';
-          data.sentence_text = trial.sentence_text;
+          data.sentence_text = trial.sentence.text;
         }
       });
 
