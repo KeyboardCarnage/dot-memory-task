@@ -397,7 +397,7 @@ function initializeExperiment() {
   // Determine block order randomly (easy or hard dot patterns first)
   const blockOrder = Math.random() < 0.5 ? ['easy', 'hard'] : ['hard', 'easy'];
 
-  // Pre-allocate sentences into two blocks (no repetition, optimized using indices)
+  // Pre-allocate sentences into two blocks
   // Each block: 8 SomeUnderinformative + 2 each of SomeTrue, SomeFalse, AllTrue, AllFalse = 16 total
   function preallocateSentenceBlocks() {
     // Group sentence indices by type
@@ -578,9 +578,6 @@ function initializeExperiment() {
           document.removeEventListener('keydown', window.sentenceJudgementKeyHandler);
           delete window.sentenceJudgementKeyHandler;
         }
-        // Save what subject answered (True or False) and the sentence details
-        data.sentence_response = data.button_pressed === 0 ? 'True' : 'False';
-        data.sentence_text = trial.sentence.text;
       }
     });
 
