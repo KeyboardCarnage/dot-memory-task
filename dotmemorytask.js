@@ -407,11 +407,15 @@ function initializeExperiment() {
     const someUnder = sentences.filter(s => s.type === 'SomeUnderinformative' && !usedSentenceTexts.has(s.text));
     const shuffledSomeUnder = shuffle([...someUnder]).slice(0, 8);
     
+    console.log("Available SomeUnderinformative:", someUnder.length, "Selected:", shuffledSomeUnder.length);
+    
     // Get 2 of each other type (excluding used sentences)
     const otherTypes = ['SomeTrue', 'SomeFalse', 'AllTrue', 'AllFalse'];
     const others = otherTypes.flatMap(type => {
       const filtered = sentences.filter(s => s.type === type && !usedSentenceTexts.has(s.text));
-      return shuffle(filtered).slice(0, 2);  // Take 2 of each type
+      const selected = shuffle(filtered).slice(0, 2);
+      console.log(`  ${type}: Available=${filtered.length}, Selected=${selected.length}`);
+      return selected;
     });
     
     // Mark all selected sentences as used
@@ -673,8 +677,15 @@ function initializeExperiment() {
     const blockSentences = getBlockSentences();
     let blockSentenceIndex = 0;
 
-    // Trials for this block (16 trials: 8 SomeUnderinformative + 2 each of SomeTrue, SomeFalse, AllTrue, AllFalse)
-    for (let trialNum = 0; trialNum < 16; trialNum++) {
+    // Debug: log how many sentences we got
+    console.log(`Block ${blockNum + 1} (${blockType}): Got ${blockSentences.length} sentences`);
+    if (blockSentences.length < 16) {
+      console.warn(`Warning: Expected 16 sentences but got ${blockSentences.length}. Running ${blockSentences.length} trials instead.`);
+    }
+
+    // Trials for this block (should be 16: 8 SomeUnderinformative + 2 each of SomeTrue, SomeFalse, AllTrue, AllFalse)
+    // Use actual length of blockSentences to avoid accessing undefined elements
+    for (let trialNum = 0; trialNum < blockSentences.length; trialNum++) {
       const trial = getNextExperimentalTrial(blockPatterns, blockPatternIndex, blockSentences, blockSentenceIndex);
       blockPatternIndex++;
       blockSentenceIndex++;
