@@ -345,9 +345,6 @@ function createShuffledSequence(patterns, numTrials) {
   return shuffle(repeated).slice(0, numTrials);
 }
 
-// Global tracking of used sentences to prevent repetition across blocks
-let usedSentenceTexts = new Set();
-
 // Wrap main code execution to ensure all dependencies are loaded
 function initializeExperiment() {
   console.log("Initializing experiment...");
@@ -400,28 +397,64 @@ function initializeExperiment() {
   // Determine block order randomly (easy or hard dot patterns first)
   const blockOrder = Math.random() < 0.5 ? ['easy', 'hard'] : ['hard', 'easy'];
 
-  // Function to get block sentences: 8 SomeUnderinformative + 2 of each other type, shuffled
-  // Ensures no sentences are repeated across blocks
-  function getBlockSentences() {
-    // Filter out already-used sentences
-    const someUnder = sentences.filter(s => s.type === 'SomeUnderinformative' && !usedSentenceTexts.has(s.text));
-    const shuffledSomeUnder = shuffle([...someUnder]).slice(0, 8);
+  // Pre-allocate sentences into two blocks (no repetition, optimized using indices)
+  // Each block: 8 SomeUnderinformative + 2 each of SomeTrue, SomeFalse, AllTrue, AllFalse = 16 total
+  function preallocateSentenceBlocks() {
+    // Group sentence indices by type
+    const indicesByType = {};
+    sentences.forEach((sentence, index) => {
+      if (!indicesByType[sentence.type]) {
+        indicesByType[sentence.type] = [];
+      }
+      indicesByType[sentence.type].push(index);
+    });
     
-    // Get 2 of each other type (excluding used sentences)
+    // Shuffle each type's indices
+    Object.keys(indicesByType).forEach(type => {
+      shuffle(indicesByType[type]);
+    });
+    
+    // Allocate to blocks
+    const blocks = [[], []];  // block1 and block2
     const otherTypes = ['SomeTrue', 'SomeFalse', 'AllTrue', 'AllFalse'];
-    const others = otherTypes.flatMap(type => {
-      const filtered = sentences.filter(s => s.type === type && !usedSentenceTexts.has(s.text));
-      return shuffle(filtered).slice(0, 2);  // Take 2 of each type
+    
+    let underInformativeIdx = 0;
+    const otherTypeIndices = {};
+    otherTypes.forEach(type => {
+      otherTypeIndices[type] = 0;
     });
     
-    // Mark all selected sentences as used
-    const blockSentences = [...shuffledSomeUnder, ...others];
-    blockSentences.forEach(sentence => {
-      usedSentenceTexts.add(sentence.text);
-    });
+    for (let blockNum = 0; blockNum < 2; blockNum++) {
+      // Add 8 SomeUnderinformative sentences to this block
+      for (let i = 0; i < 8; i++) {
+        blocks[blockNum].push(indicesByType['SomeUnderinformative'][underInformativeIdx++]);
+      }
+      
+      // Add 2 of each other type to this block
+      otherTypes.forEach(type => {
+        for (let i = 0; i < 2; i++) {
+          blocks[blockNum].push(indicesByType[type][otherTypeIndices[type]++]);
+        }
+      });
+      
+      // Shuffle this block's sentences
+      shuffle(blocks[blockNum]);
+      
+      console.log(`Block ${blockNum + 1}: ${blocks[blockNum].length} sentences allocated and shuffled`);
+    }
     
-    console.log("Block sentences selected:", blockSentences.length, "total. SomeUnder:", shuffledSomeUnder.length, "Others:", others.length);
-    return shuffle(blockSentences);
+    return blocks;
+  }
+  
+  // Pre-allocate all sentences at the start
+  const sentenceBlocks = preallocateSentenceBlocks();
+  let currentBlockIndex = 0;  // Tracks which block (0 or 1) we're using
+  
+  // Function to get sentences for a block (just returns the pre-allocated block)
+  function getBlockSentences(blockIndex) {
+    const sentenceIndices = sentenceBlocks[blockIndex];
+    console.log(`Getting block ${blockIndex}: ${sentenceIndices.length} sentences`);
+    return sentenceIndices;
   }
 
   // Function to get next pattern and sentence for practice
@@ -436,10 +469,11 @@ function initializeExperiment() {
   }
 
   // Function to get next experimental trial for a block
-  function getNextExperimentalTrial(blockPatterns, blockPatternIndex, blockSentences, blockSentenceIndex) {
+  function getNextExperimentalTrial(blockPatterns, blockPatternIndex, sentenceIndices, sentenceIndex) {
     const pattern = blockPatterns[blockPatternIndex % blockPatterns.length];
-    const sentence = blockSentences[blockSentenceIndex];
-    return { pattern, sentence };
+    const sentenceIdx = sentenceIndices[sentenceIndex];  // Get the sentence index
+    const sentence = sentences[sentenceIdx];  // Get the actual sentence object
+    return { pattern, sentence, sentenceIdx };
   }
 
   // Add CSS to the page using JavaScript
@@ -670,12 +704,12 @@ function initializeExperiment() {
     }
 
     let blockPatternIndex = 0;
-    const blockSentences = getBlockSentences();
+    const blockSentenceIndices = getBlockSentences(blockNum);
     let blockSentenceIndex = 0;
 
     // Trials for this block (16 trials: 8 SomeUnderinformative + 2 each of SomeTrue, SomeFalse, AllTrue, AllFalse)
     for (let trialNum = 0; trialNum < 16; trialNum++) {
-      const trial = getNextExperimentalTrial(blockPatterns, blockPatternIndex, blockSentences, blockSentenceIndex);
+      const trial = getNextExperimentalTrial(blockPatterns, blockPatternIndex, blockSentenceIndices, blockSentenceIndex);
       blockPatternIndex++;
       blockSentenceIndex++;
 
