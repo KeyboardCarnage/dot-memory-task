@@ -361,8 +361,11 @@ function initializeExperiment() {
       
       // Extract specific data for Qualtrics
       const sentenceTexts = data.filter(trial => trial.sentence_text !== undefined).map(trial => trial.sentence_text);
+      const sentenceTypes = data.filter(trial => trial.sentence_type !== undefined).map(trial => trial.sentence_type);
       const sentenceResponses = data.filter(trial => trial.sentence_response !== undefined).map(trial => trial.sentence_response);
-      const sentenceRTs = data.filter(trial => trial.sentence_response !== undefined).map(trial => trial.rt);
+      const sentenceRTs = data.filter(trial => trial.rt !== undefined).map(trial => trial.rt);
+      const patternDots = data.filter(trial => trial.pattern_dot !== undefined).map(trial => trial.pattern_dot);
+      const patternTypes = data.filter(trial => trial.pattern_type !== undefined).map(trial => trial.pattern_type);
       const reproductionAccuracies = data.filter(trial => trial.reproduction_correct !== undefined).map(trial => trial.reproduction_correct);
       
       console.log("Sentence texts:", sentenceTexts);
@@ -373,8 +376,12 @@ function initializeExperiment() {
       // Try to save to Qualtrics if available
       if (typeof Qualtrics !== 'undefined' && Qualtrics.SurveyEngine) {
         Qualtrics.SurveyEngine.setEmbeddedData('jsPsychData', JSON.stringify(data));
-        Qualtrics.SurveyEngine.setEmbeddedData('sentenceResponses', JSON.stringify(sentenceResponses));
         Qualtrics.SurveyEngine.setEmbeddedData('sentenceTexts', JSON.stringify(sentenceTexts));
+        Qualtrics.SurveyEngine.setEmbeddedData('sentenceTypes', JSON.stringify(sentenceTypes));
+        Qualtrics.SurveyEngine.setEmbeddedData('sentenceResponses', JSON.stringify(sentenceResponses));
+        Qualtrics.SurveyEngine.setEmbeddedData('sentenceRTs', JSON.stringify(sentenceRTs));
+        Qualtrics.SurveyEngine.setEmbeddedData('patternDots', JSON.stringify(patternDots));
+        Qualtrics.SurveyEngine.setEmbeddedData('patternTypes', JSON.stringify(patternTypes));
         Qualtrics.SurveyEngine.setEmbeddedData('reproductionAccuracies', JSON.stringify(reproductionAccuracies));
         Qualtrics.SurveyEngine.setEmbeddedData('taskCompleted', 'true');
         if (typeof jQuery !== 'undefined') {
@@ -525,8 +532,6 @@ function initializeExperiment() {
         on_finish: function(data) {
           data.pattern_type = trial.pattern.type;
           data.pattern_dots = trial.pattern.dots;
-          data.sentence_text = trial.sentence.text;
-          data.sentence_type = trial.sentence.type;
           window.currentPatternDots = trial.pattern.dots;
         }
       });
@@ -539,9 +544,7 @@ function initializeExperiment() {
         data: { is_practice: true, block: 'practice' },
         on_finish: function(data) {
           data.pattern_type = trial.pattern.type;
-          data.pattern_dots = trial.pattern.dots;
-          data.sentence_text = trial.sentence.text;
-          data.sentence_type = trial.sentence.type;
+          data.pattern_dots = trial.pattern.dots;          
           window.currentPatternDots = trial.pattern.dots;
         }
       });
@@ -582,6 +585,7 @@ function initializeExperiment() {
         // Save what subject answered (True or False) and the sentence details
         data.sentence_response = data.response === 0 ? 'True' : 'False';
         data.sentence_text = trial.sentence.text;
+        data.sentence_type = trial.sentence.type;
       }
     });
 
@@ -732,8 +736,6 @@ function initializeExperiment() {
         on_finish: function(data) {
           data.pattern_type = trial.pattern.type;
           data.pattern_dots = trial.pattern.dots;
-          data.sentence_text = trial.sentence.text;
-          data.sentence_type = trial.sentence.type;
           window.currentPatternDots = trial.pattern.dots;
         }
       });
@@ -771,6 +773,7 @@ function initializeExperiment() {
           // Save what subject answered (True or False) and the sentence details
           data.sentence_response = data.response === 0 ? 'True' : 'False';
           data.sentence_text = trial.sentence.text;
+          data.sentence_type = trial.sentence.type;
         }
       });
 
