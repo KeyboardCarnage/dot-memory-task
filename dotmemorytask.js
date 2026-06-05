@@ -450,7 +450,6 @@ function initializeExperiment() {
   
   // Pre-allocate all sentences at the start
   const sentenceBlocks = preallocateSentenceBlocks();
-  let currentBlockIndex = 0;  // Tracks which block (0 or 1) we're using
   
   // Function to get sentences for a block (just returns the pre-allocated block)
   function getBlockSentences(blockIndex) {
@@ -597,7 +596,7 @@ function initializeExperiment() {
                    ${createGridHTML([], true)}
                  </div>`,
       choices: ['Continue'],
-      button_html: '<button class="button">%choice%</button>',
+      button_html: '<button class="jspsych-btn">%choice%</button>',
       data: { is_practice: true, block: 'practice' },
       on_load: function() {
         const selectedDots = [];
@@ -657,7 +656,7 @@ function initializeExperiment() {
           delete window.currentKeydownHandler;
         }
         data.reproduced_dots = window.currentSelectedDots || [];
-        const dotDisplayTrial = jsPsych.data.get().filter({ block: blockType }).last(3).values()[0];
+        const dotDisplayTrial = jsPsych.data.get().last(3).values()[0];
         const correct = dotDisplayTrial.pattern_dots || [];
         const reproduced = data.reproduced_dots.sort((a, b) => a - b);
         const correctSorted = correct.sort((a, b) => a - b);
@@ -675,13 +674,13 @@ function initializeExperiment() {
           return '<div class="feedback">Correct reproduction!<br>Please continue the experiment.</div>';
         } else {
           // For practice, show correct pattern if wrong
-          const dotDisplayTrial = jsPsych.data.get().filter({ block: blockType }).last(3).values()[0];
+          const dotDisplayTrial = jsPsych.data.get().last(3).values()[0];
           const correct = dotDisplayTrial.pattern_dots || [];
           return '<div class="feedback">Incorrect reproduction!<br>Here is the correct pattern:<br>' + createGridHTML(correctDots) + '<br>Please pay more attention to the dot pattern.</div>';
         }
       },
       choices: ['Continue'],
-      button_html: '<button class="button">%choice%</button>',
+      button_html: '<button class="jspsych-btn">%choice%</button>',
       data: { is_practice: true, block: 'practice' }
     });
   }
@@ -865,7 +864,7 @@ function initializeExperiment() {
           }
         },
         choices: ['Continue'],
-        button_html: '<button class="button">%choice%</button>',
+        button_html: '<button class="jspsych-btn">%choice%</button>',
         data: { block: blockType }
       });
     }
