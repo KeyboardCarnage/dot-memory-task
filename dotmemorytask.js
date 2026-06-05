@@ -28,15 +28,15 @@ const easyPatterns = [
 ];
 
 const hardPatterns = [
-  { type: 'hard', dots: [1, 4, 5, 9] },
+  { type: 'hard', dots: [1, 3, 4, 9] },
   { type: 'hard', dots: [1, 6, 7, 8] },
-  { type: 'hard', dots: [1, 2, 5, 9] },
-  { type: 'hard', dots: [3, 4, 5, 7] },
+  { type: 'hard', dots: [1, 2, 4, 9] },
+  { type: 'hard', dots: [3, 4, 7, 9] },
   { type: 'hard', dots: [2, 4, 8, 9] },
   { type: 'hard', dots: [1, 4, 6, 8] },
-  { type: 'hard', dots: [3, 4, 6, 8] },
+  { type: 'hard', dots: [1, 3, 6, 8] },
   { type: 'hard', dots: [2, 3, 5, 7] },
-  { type: 'hard', dots: [1, 3, 5, 7] },
+  { type: 'hard', dots: [1, 3, 6, 7] },
   { type: 'hard', dots: [2, 4, 6, 7] },
   { type: 'hard', dots: [1, 5, 6, 8] },
   { type: 'hard', dots: [2, 3, 4, 8] },
