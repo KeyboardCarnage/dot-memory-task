@@ -2,10 +2,6 @@
 // Based on De Neys & Schaeken (2007), Dieussaert et al. (2011) and Marty & Chemla (2013)
 // This code uses jsPsych to implement a dot pattern memory task with sentence judgement
 
-// Hide Qualtrics next button
-var qthis = this;
-qthis.hideNextButton();
-
 // Define the practice dot patterns
 const practicePatterns = [
   { type: 'practice', dots: [1, 5, 9] },
@@ -397,8 +393,6 @@ function initializeExperiment() {
         // Clear the stage
         jQuery('.display_stage').remove();
         jQuery('.display_stage_background').remove();
-        // Simulate Qualtrics next button
-        qthis.clickNextButton();
       } else {
         console.log("Not in Qualtrics - displaying data in console");
         jsPsych.data.displayData();
