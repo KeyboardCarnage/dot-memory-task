@@ -369,8 +369,11 @@ function initializeExperiment() {
       const reproductionAccuracies = data.filter(trial => trial.reproduction_correct !== undefined).map(trial => trial.reproduction_correct);
       
       console.log("Sentence texts:", sentenceTexts);
+      console.log("Sentence types:", sentenceTypes);
       console.log("Sentence responses:", sentenceResponses);
       console.log("Sentence RTs:", sentenceRTs);
+      console.log("Pattern dots:", patternDots);
+      console.log("Pattern types:", patternTypes);
       console.log("Reproduction accuracies:", reproductionAccuracies);
       
       // Try to save to Qualtrics if available
