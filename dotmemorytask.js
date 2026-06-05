@@ -656,8 +656,7 @@ function initializeExperiment() {
           delete window.currentKeydownHandler;
         }
         data.reproduced_dots = window.currentSelectedDots || [];
-        const dotDisplayTrial = jsPsych.data.get().last(3).values()[0];
-        const correct = dotDisplayTrial.pattern_dots || [];
+        const correct = window.currentPatternDots || [];
         const reproduced = data.reproduced_dots.sort((a, b) => a - b);
         const correctSorted = correct.sort((a, b) => a - b);
         data.reproduction_correct = JSON.stringify(reproduced) === JSON.stringify(correctSorted);
@@ -674,8 +673,7 @@ function initializeExperiment() {
           return '<div class="feedback">Correct reproduction!<br>Please continue the experiment.</div>';
         } else {
           // For practice, show correct pattern if wrong
-          const dotDisplayTrial = jsPsych.data.get().last(3).values()[0];
-          const correct = dotDisplayTrial.pattern_dots || [];
+          const correctDots = window.currentPatternDots || [];
           return '<div class="feedback">Incorrect reproduction!<br>Here is the correct pattern:<br>' + createGridHTML(correctDots) + '<br>Please pay more attention to the dot pattern.</div>';
         }
       },
