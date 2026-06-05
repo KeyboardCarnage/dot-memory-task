@@ -772,8 +772,10 @@ function initializeExperiment() {
             delete window.sentenceJudgementKeyHandler;
           }
           // Save what subject answered (True or False) and the sentence details
+          console.log(data.response);
           data.sentence_response = data.response === 0 ? 'True' : 'False';
           data.sentence_text = trial.sentence.text;
+          console.log(data.sentence_response);
         }
       });
 
