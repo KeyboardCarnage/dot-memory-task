@@ -364,7 +364,7 @@ function initializeExperiment() {
       const sentenceTypes = data.filter(trial => trial.sentence_type !== undefined).map(trial => trial.sentence_type);
       const sentenceResponses = data.filter(trial => trial.sentence_response !== undefined).map(trial => trial.sentence_response);
       const sentenceRTs = data.filter(trial => trial.rt !== undefined).map(trial => trial.rt);
-      const patternDots = data.filter(trial => trial.pattern_dot !== undefined).map(trial => trial.pattern_dot);
+      const patternDots = data.filter(trial => trial.pattern_dots !== undefined).map(trial => trial.pattern_dots);
       const patternTypes = data.filter(trial => trial.pattern_type !== undefined).map(trial => trial.pattern_type);
       const reproductionAccuracies = data.filter(trial => trial.reproduction_correct !== undefined).map(trial => trial.reproduction_correct);
       
